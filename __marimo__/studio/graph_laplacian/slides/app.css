@@ -1,0 +1,538 @@
+/* ---------------------------------------------------------------------------
+   The Graph Laplacian — deck theme.
+   Palette anchors: the coolwarm colormap endpoints used by the notebook's own
+   figures (#3B4CC0 / #B40426), one accent per cluster.
+--------------------------------------------------------------------------- */
+
+:root {
+  --paper: #f7f8fb;
+  --ink: #161a24;
+  --muted: #5c6374;
+  --hairline: #d9dde6;
+  --blue: #3b4cc0;
+  --red: #b40426;
+  --card: #ffffff;
+  --font-display: "Spectral", Georgia, "Times New Roman", serif;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: clamp(15px, 1.15vw, 19px);
+  line-height: 1.55;
+}
+
+#app-shell {
+  position: fixed;
+  inset: 0;
+}
+
+/* ------------------------------------------------------------------ deck */
+
+.deck {
+  position: absolute;
+  inset: 0;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  padding: clamp(2rem, 6vh, 4.5rem) clamp(1.5rem, 6vw, 6rem) clamp(4.5rem, 10vh, 6.5rem);
+  box-sizing: border-box;
+  display: grid;
+  align-content: center;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 240ms ease;
+}
+
+.slide.present {
+  visibility: visible;
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide {
+    transition: none;
+  }
+}
+
+.slide-grid {
+  display: grid;
+  grid-template-columns: minmax(28ch, 40ch) minmax(0, 1fr);
+  gap: clamp(1.5rem, 4vw, 4rem);
+  align-items: center;
+}
+
+/* ------------------------------------------------------------------ type */
+
+.eyebrow {
+  margin: 0 0 0.9rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.eyebrow::before {
+  content: "";
+  display: inline-block;
+  width: 0.6em;
+  height: 0.6em;
+  margin-right: 0.7em;
+  background: var(--red);
+  transform: rotate(45deg) translateY(-0.05em);
+}
+
+h1,
+h2 {
+  margin: 0 0 1rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+h2 {
+  font-size: clamp(1.7rem, 3.1vw, 2.6rem);
+}
+
+.prose p {
+  margin: 0 0 0.9em;
+  max-width: 44ch;
+}
+
+.prose em {
+  font-family: var(--font-display);
+  font-style: italic;
+}
+
+.aside {
+  color: var(--muted);
+  font-size: 0.88em;
+  border-left: 2px solid var(--hairline);
+  padding-left: 0.9em;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+}
+
+.nobr {
+  white-space: nowrap;
+}
+
+.term-blue {
+  color: var(--blue);
+  font-family: var(--font-display);
+  font-size: 1.25em;
+}
+
+.term-red {
+  color: var(--red);
+  font-family: var(--font-display);
+  font-size: 1.25em;
+}
+
+/* ----------------------------------------------------------------- cover */
+
+.slide-cover {
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  display: grid;
+  gap: clamp(1rem, 5vw, 5rem);
+  align-items: center;
+}
+
+.slide-cover h1 {
+  font-size: clamp(3rem, 8.5vw, 6.5rem);
+  font-weight: 500;
+  margin: 0 0 1.2rem;
+}
+
+.dek {
+  font-size: clamp(1.05rem, 1.8vw, 1.45rem);
+  max-width: 34ch;
+  color: var(--ink);
+  margin: 0 0 2.2rem;
+}
+
+.hint {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.hint kbd {
+  display: inline-block;
+  padding: 0.05em 0.5em;
+  border: 1px solid var(--hairline);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  background: var(--card);
+  font-family: inherit;
+}
+
+.cover-motif {
+  width: min(100%, 30rem);
+  justify-self: center;
+}
+
+.cover-motif .edges path {
+  fill: none;
+  stroke: #c6ccd9;
+  stroke-width: 1;
+}
+
+.cover-motif .nodes-blue circle {
+  fill: var(--blue);
+}
+
+.cover-motif .nodes-red circle {
+  fill: var(--red);
+}
+
+/* ----------------------------------------------------- figures and cells */
+
+.figure {
+  min-width: 0;
+  display: grid;
+  justify-items: center;
+}
+
+.figure > marimo-cell {
+  display: block;
+  width: 100%;
+  --marimo-cell-padding: 0;
+  --marimo-cell-background: transparent;
+  --marimo-cell-border: none;
+  --marimo-cell-radius: 0;
+  --marimo-cell-skeleton-height: 40vh;
+}
+
+.figure img {
+  max-width: 100%;
+  max-height: 58vh;
+  height: auto;
+}
+
+/* mo.hstack spreads its children across the full column with an inline
+   justify-content, which reads as empty space between plots on a slide.
+   Center them with a fixed, comfortable gap instead. */
+.figure marimo-cell .output div[style*="flex-flow: row"] {
+  justify-content: center !important;
+  gap: 2.5rem !important;
+}
+
+/* --------------------------------------------------------------- slide 3 */
+
+.deflist p {
+  margin: 0 0 1.1em;
+  max-width: 40ch;
+}
+
+.mathpanel {
+  display: grid;
+  gap: 1.2rem;
+  justify-items: center;
+  align-content: center;
+}
+
+.equation > marimo-cell {
+  display: block;
+  --marimo-cell-padding: 0;
+  --marimo-cell-background: transparent;
+  --marimo-cell-border: none;
+  --marimo-cell-skeleton-height: 5rem;
+}
+
+/* The rendered math lives in a shadow root and sizes itself in em, so scale
+   it through inherited font-size on its host element. */
+.equation marimo-tex {
+  font-size: 1.35rem;
+}
+
+.equation-hero marimo-tex {
+  font-size: 2.6rem;
+}
+
+.caption {
+  max-width: 46ch;
+  color: var(--muted);
+  font-size: 0.88em;
+  text-align: center;
+  margin: 0.5rem 0 0;
+}
+
+/* ------------------------------------------------------ controls + chips */
+
+.control {
+  margin: 1.4rem 0 1rem;
+  padding: 0.9rem 1.1rem;
+  background: var(--card);
+  border: 1px solid var(--hairline);
+  border-radius: 10px;
+  width: fit-content;
+}
+
+.control marimo-output {
+  display: block;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: baseline;
+  padding: 0.3em 0.85em;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  background: var(--card);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.chip b {
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.chip-lambda {
+  margin-top: 0.4rem;
+}
+
+.chip-lambda b {
+  color: var(--red);
+}
+
+/* ------------------------------------------------------------- takeaways */
+
+.slide-takeaway {
+  justify-items: center;
+  text-align: left;
+}
+
+.prose-wide {
+  max-width: 62ch;
+}
+
+.takeaways {
+  margin: 1.5rem 0 2.5rem;
+  padding: 0;
+  list-style: none;
+  counter-reset: takeaway;
+  display: grid;
+  gap: 1.3rem;
+}
+
+.takeaways li {
+  counter-increment: takeaway;
+  position: relative;
+  padding-left: 2.6rem;
+  max-width: 58ch;
+}
+
+.takeaways li::before {
+  content: counter(takeaway);
+  position: absolute;
+  left: 0;
+  top: 0.05em;
+  width: 1.6em;
+  height: 1.6em;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--hairline);
+  border-radius: 50%;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--muted);
+  background: var(--card);
+}
+
+.takeaways strong {
+  font-family: var(--font-display);
+  font-size: 1.08em;
+}
+
+.colophon {
+  color: var(--muted);
+  font-size: 0.85em;
+  max-width: 52ch;
+  border-top: 1px solid var(--hairline);
+  padding-top: 1.2rem;
+}
+
+/* ------------------------------------------------------------------- hud */
+
+.hud {
+  position: absolute;
+  top: clamp(0.8rem, 2.5vh, 1.6rem);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  padding: 0.45rem 0.8rem;
+  background: var(--card);
+  border: 1px solid var(--hairline);
+  border-radius: 10px;
+  box-shadow: 0 1px 2px rgb(22 26 36 / 0.05);
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 240ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hud {
+    transition: none;
+  }
+}
+
+/* The dataset feeds the figures on these slides only; the control stays
+   mounted on the others so its state survives. */
+#app-shell[data-slide="1"] .hud,
+#app-shell[data-slide="3"] .hud,
+#app-shell[data-slide="4"] .hud,
+#app-shell[data-slide="5"] .hud {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ----------------------------------------------- signature: spectrum rail */
+
+.rail {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(0.9rem, 3vh, 1.8rem);
+  transform: translateX(-50%);
+  width: min(680px, 72vw);
+  height: 2.6rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  z-index: 10;
+}
+
+.rail-axis {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0.55rem;
+  height: 1px;
+  background: var(--hairline);
+}
+
+.tick {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  gap: 0.35rem;
+  padding: 0 0.4rem;
+  margin: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font-family: var(--font-mono);
+}
+
+.tick-mark {
+  display: block;
+  width: 2px;
+  height: 1.1rem;
+  background: var(--hairline);
+  transition: background 160ms ease, height 160ms ease;
+}
+
+.tick-label {
+  font-size: 0.62rem;
+  color: var(--muted);
+  opacity: 0.8;
+}
+
+.tick.passed .tick-mark {
+  background: var(--ink);
+}
+
+.tick[aria-current="true"] .tick-mark {
+  background: var(--red);
+  height: 1.45rem;
+}
+
+.tick[aria-current="true"] .tick-label {
+  color: var(--red);
+  opacity: 1;
+}
+
+.tick:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ------------------------------------------------------------ responsive */
+
+@media (max-width: 900px) {
+  body {
+    overflow: auto;
+  }
+
+  #app-shell {
+    position: static;
+  }
+
+  .deck {
+    position: static;
+  }
+
+  .slide {
+    position: static;
+    visibility: visible;
+    opacity: 1;
+    min-height: 100svh;
+    padding: 4.5rem 1.25rem 3rem;
+  }
+
+  .slide-grid,
+  .slide-cover {
+    grid-template-columns: 1fr;
+  }
+
+  .figure img {
+    max-height: none;
+  }
+
+  .mathpanel {
+    min-height: 0;
+  }
+
+  .hud {
+    position: fixed;
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .rail {
+    display: none;
+  }
+}

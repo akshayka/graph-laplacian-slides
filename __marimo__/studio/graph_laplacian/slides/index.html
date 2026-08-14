@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Graph Laplacian — a live deck</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+    />
+    <link rel="stylesheet" href="app.css" />
+    <script type="module" src="app.js"></script>
+  </head>
+  <body>
+    <main id="app-shell" data-slide="0">
+      <!-- Persistent HUD: the notebook's dataset control, live on every slide -->
+      <div class="hud">
+        <marimo-output value="dataset_picker"></marimo-output>
+      </div>
+
+      <div class="deck">
+        <!-- 1 · Cover -->
+        <section class="slide slide-cover" aria-label="Slide 1: cover">
+          <div class="cover-text">
+            <p class="eyebrow">Spectral clustering · a live marimo deck</p>
+            <h1>The Graph<br />Laplacian</h1>
+            <p class="dek">How one matrix finds the clusters that <span class="nobr">k-means</span> misses.</p>
+            <p class="hint"><kbd>→</kbd> to advance — every figure is computed live</p>
+          </div>
+          <svg
+            class="cover-motif"
+            viewBox="0 0 320 210"
+            role="img"
+            aria-label="Two crescent-shaped point clouds, one blue and one red, joined into a graph"
+          >
+            <g class="edges">
+              <path d="M50 90 L59 55 L85 29 L120 20 L155 29 L181 55 L190 90" />
+              <path d="M50 90 L85 29 M59 55 L120 20 M85 29 L155 29 M120 20 L181 55 M155 29 L190 90" />
+              <path d="M130 110 L139 145 L165 171 L200 180 L235 171 L261 145 L270 110" />
+              <path d="M130 110 L165 171 M139 145 L200 180 M165 171 L235 171 M200 180 L261 145 M235 171 L270 110" />
+            </g>
+            <g class="nodes-blue">
+              <circle cx="50" cy="90" r="4.5" /><circle cx="59" cy="55" r="4.5" />
+              <circle cx="85" cy="29" r="4.5" /><circle cx="120" cy="20" r="4.5" />
+              <circle cx="155" cy="29" r="4.5" /><circle cx="181" cy="55" r="4.5" />
+              <circle cx="190" cy="90" r="4.5" />
+            </g>
+            <g class="nodes-red">
+              <circle cx="130" cy="110" r="4.5" /><circle cx="139" cy="145" r="4.5" />
+              <circle cx="165" cy="171" r="4.5" /><circle cx="200" cy="180" r="4.5" />
+              <circle cx="235" cy="171" r="4.5" /><circle cx="261" cy="145" r="4.5" />
+              <circle cx="270" cy="110" r="4.5" />
+            </g>
+          </svg>
+        </section>
+
+        <!-- 2 · The problem -->
+        <section class="slide" aria-label="Slide 2: the problem">
+          <div class="slide-grid">
+            <div class="prose">
+              <p class="eyebrow">The problem</p>
+              <h2>k-means can't see shape</h2>
+              <p>
+                k-means assigns each point to its nearest centroid. That works when
+                clusters are round blobs.
+              </p>
+              <p>
+                These datasets are <em>shapes</em> — interlocking moons, concentric
+                rings. The nearest centroid is often in the other cluster, so the
+                partition cuts straight through both of them.
+              </p>
+              <p class="aside">Switch the dataset up top — the failure follows.</p>
+            </div>
+            <div class="figure">
+              <marimo-cell name="raw_vs_kmeans"></marimo-cell>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3 · The matrix -->
+        <section class="slide" aria-label="Slide 3: the matrix">
+          <div class="slide-grid slide-grid-math">
+            <div class="prose">
+              <p class="eyebrow">The matrix</p>
+              <h2>Write the graph down</h2>
+              <div class="deflist">
+                <p>
+                  <strong class="term-blue">D</strong> — the degree matrix. Diagonal:
+                  <span class="mono">D<sub>ii</sub></span> counts the edges at node
+                  <span class="mono">i</span>.
+                </p>
+                <p>
+                  <strong class="term-red">A</strong> — the adjacency matrix.
+                  <span class="mono">A<sub>ij</sub> = 1</span> exactly when
+                  <span class="mono">i</span> and <span class="mono">j</span> are
+                  connected.
+                </p>
+              </div>
+            </div>
+            <div class="mathpanel">
+              <div class="equation equation-hero">
+                <marimo-cell name="math_definition"></marimo-cell>
+              </div>
+              <div class="equation">
+                <marimo-cell name="math_energy"></marimo-cell>
+              </div>
+              <p class="caption">
+                Give every node a number x<sub>i</sub>. The quadratic form adds up the
+                squared disagreement across each edge, so vectors that are smooth on
+                the graph score low.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4 · The graph -->
+        <section class="slide" aria-label="Slide 4: build the graph">
+          <div class="slide-grid">
+            <div class="prose">
+              <p class="eyebrow">The graph</p>
+              <h2>Points become a graph</h2>
+              <p>
+                Connect each point to its k nearest neighbors. The matrix and the
+                picture are the same object: a black pixel at
+                <span class="mono">(i, j)</span> is an edge.
+              </p>
+              <div class="control">
+                <marimo-output value="n_neighbors"></marimo-output>
+              </div>
+              <div class="chips">
+                <span class="chip"><b mo-value="deck_stats.n_points"></b>&nbsp;nodes</span>
+                <span class="chip"><b mo-value="deck_stats.n_edges"></b>&nbsp;edges</span>
+                <span class="chip">k&nbsp;=&nbsp;<b mo-value="deck_stats.k"></b></span>
+              </div>
+            </div>
+            <div class="figure">
+              <marimo-cell name="graph_views"></marimo-cell>
+            </div>
+          </div>
+        </section>
+
+        <!-- 5 · The eigenvector -->
+        <section class="slide" aria-label="Slide 5: the Fiedler eigenvector">
+          <div class="slide-grid">
+            <div class="prose">
+              <p class="eyebrow">The eigenvector</p>
+              <h2>The low end of the spectrum knows the split</h2>
+              <p>
+                An eigenvector with a small eigenvalue barely disagrees across edges,
+                so its entries are nearly constant on each tightly connected region.
+              </p>
+              <p>
+                Here the entries settle at two levels — one per cluster. Sorted by
+                node index, the split is unmistakable. This is the
+                <strong>Fiedler eigenvector</strong>.
+              </p>
+              <p class="chip chip-lambda">
+                λ<sub>2</sub>&nbsp;=&nbsp;<b mo-value="deck_stats.lambda2"></b>&nbsp;· algebraic connectivity
+              </p>
+            </div>
+            <div class="figure">
+              <marimo-cell name="fiedler_plot"></marimo-cell>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6 · The result -->
+        <section class="slide" aria-label="Slide 6: the result">
+          <div class="slide-grid">
+            <div class="prose">
+              <p class="eyebrow">The result</p>
+              <h2>Cluster the eigenvector, not the points</h2>
+              <p>
+                Run k-means on the Fiedler entries — a one-dimensional problem — and
+                carry the labels back to the original points.
+              </p>
+              <p>
+                The clusters separate exactly where the geometry says they should.
+                Same algorithm as slide two, better coordinates.
+              </p>
+            </div>
+            <div class="figure">
+              <marimo-cell name="spectral_result"></marimo-cell>
+            </div>
+          </div>
+        </section>
+
+        <!-- 7 · Takeaways -->
+        <section class="slide slide-takeaway" aria-label="Slide 7: takeaways">
+          <div class="prose prose-wide">
+            <p class="eyebrow">Takeaways</p>
+            <h2>What the Laplacian bought us</h2>
+            <ol class="takeaways">
+              <li>
+                <strong>A graph made the shape explicit.</strong> Nearest-neighbor
+                edges encode the geometry that raw coordinates hide from k-means.
+              </li>
+              <li>
+                <strong>The spectrum read the graph.</strong> Low eigenvectors of
+                L&nbsp;=&nbsp;D&nbsp;−&nbsp;A are smooth across edges, so they are
+                nearly constant on clusters.
+              </li>
+              <li>
+                <strong>The hard problem became easy.</strong> k-means works fine —
+                once it runs in the eigenvector's coordinates.
+              </li>
+            </ol>
+            <p class="colophon">
+              Built with marimo studio: one reactive notebook projected into these
+              slides. The dropdown, the slider, and every figure are live notebook
+              cells.
+            </p>
+          </div>
+        </section>
+      </div>
+
+      <!-- Signature: slide progress drawn as the spectrum of L -->
+      <nav class="rail" aria-label="Slides">
+        <span class="rail-axis" aria-hidden="true"></span>
+        <button class="tick" data-slide="0"><span class="tick-mark"></span><span class="tick-label">λ<sub>0</sub></span></button>
+        <button class="tick" data-slide="1"><span class="tick-mark"></span><span class="tick-label">λ<sub>1</sub></span></button>
+        <button class="tick" data-slide="2"><span class="tick-mark"></span><span class="tick-label">λ<sub>2</sub></span></button>
+        <button class="tick" data-slide="3"><span class="tick-mark"></span><span class="tick-label">λ<sub>3</sub></span></button>
+        <button class="tick" data-slide="4"><span class="tick-mark"></span><span class="tick-label">λ<sub>4</sub></span></button>
+        <button class="tick" data-slide="5"><span class="tick-mark"></span><span class="tick-label">λ<sub>5</sub></span></button>
+        <button class="tick" data-slide="6"><span class="tick-mark"></span><span class="tick-label">λ<sub>6</sub></span></button>
+      </nav>
+    </main>
+  </body>
+</html>
