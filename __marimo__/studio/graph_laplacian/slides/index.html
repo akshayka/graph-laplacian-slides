@@ -73,7 +73,7 @@
               </p>
               <p class="aside">Switch the dataset up top — the failure follows.</p>
             </div>
-            <div class="figure">
+            <div class="figure" data-fragment="1">
               <marimo-cell name="raw_vs_kmeans"></marimo-cell>
             </div>
           </div>
@@ -103,10 +103,10 @@
               <div class="equation equation-hero">
                 <marimo-cell name="math_definition"></marimo-cell>
               </div>
-              <div class="equation">
+              <div class="equation" data-fragment="1">
                 <marimo-cell name="math_energy"></marimo-cell>
               </div>
-              <p class="caption">
+              <p class="caption" data-fragment="1">
                 Give every node a number x<sub>i</sub>. The quadratic form adds up the
                 squared disagreement across each edge, so vectors that are smooth on
                 the graph score low.
@@ -181,7 +181,7 @@
                 Same algorithm as slide two, better coordinates.
               </p>
             </div>
-            <div class="figure">
+            <div class="figure" data-fragment="1">
               <marimo-cell name="spectral_result"></marimo-cell>
             </div>
           </div>
@@ -193,16 +193,16 @@
             <p class="eyebrow">Takeaways</p>
             <h2>What the Laplacian bought us</h2>
             <ol class="takeaways">
-              <li>
+              <li data-fragment="1">
                 <strong>A graph made the shape explicit.</strong> Nearest-neighbor
                 edges encode the geometry that raw coordinates hide from k-means.
               </li>
-              <li>
+              <li data-fragment="2">
                 <strong>The spectrum read the graph.</strong> Low eigenvectors of
                 L&nbsp;=&nbsp;D&nbsp;−&nbsp;A are smooth across edges, so they are
                 nearly constant on clusters.
               </li>
-              <li>
+              <li data-fragment="3">
                 <strong>The hard problem became easy.</strong> k-means works fine —
                 once it runs in the eigenvector's coordinates.
               </li>

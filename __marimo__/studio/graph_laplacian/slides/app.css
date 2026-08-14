@@ -67,6 +67,29 @@ body {
   }
 }
 
+/* Fragments: marked elements stay in layout but hidden until revealed, so the
+   slide never reflows and projected figures load before they appear. */
+[data-fragment] {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(0.6rem);
+  transition: opacity 320ms ease, transform 320ms ease, visibility 0s 320ms;
+}
+
+[data-fragment].revealed {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity 320ms ease, transform 320ms ease, visibility 0s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-fragment] {
+    transition: none;
+    transform: none;
+  }
+}
+
 .slide-grid {
   display: grid;
   grid-template-columns: minmax(28ch, 40ch) minmax(0, 1fr);
@@ -523,6 +546,12 @@ h2 {
 
   .mathpanel {
     min-height: 0;
+  }
+
+  [data-fragment] {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
   }
 
   .hud {

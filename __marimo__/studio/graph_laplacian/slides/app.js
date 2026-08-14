@@ -2,6 +2,27 @@ const shell = document.getElementById("app-shell");
 const slides = Array.from(document.querySelectorAll(".deck > .slide"));
 const ticks = Array.from(document.querySelectorAll(".rail .tick"));
 
+// Fragments reveal in data-fragment order; equal values reveal together.
+const fragmentGroups = slides.map((slide) => {
+  const marked = Array.from(slide.querySelectorAll("[data-fragment]"));
+  const orders = Array.from(
+    new Set(marked.map((el) => Number(el.dataset.fragment))),
+  ).sort((a, b) => a - b);
+  return orders.map((order) =>
+    marked.filter((el) => Number(el.dataset.fragment) === order),
+  );
+});
+const revealed = slides.map(() => 0);
+
+function setRevealed(index, count) {
+  revealed[index] = Math.min(Math.max(count, 0), fragmentGroups[index].length);
+  fragmentGroups[index].forEach((group, g) => {
+    group.forEach((el) =>
+      el.classList.toggle("revealed", g < revealed[index]),
+    );
+  });
+}
+
 function indexFromHash() {
   const match = /^#\/(\d+)$/.exec(location.hash);
   if (!match) return 0;
@@ -13,6 +34,9 @@ let current = -1;
 function show(next) {
   const target = Math.min(Math.max(next, 0), slides.length - 1);
   if (target === current) return;
+  // Entering forward starts a slide unrevealed; entering backward shows it
+  // complete, so retreating never replays fragments.
+  setRevealed(target, target > current ? 0 : fragmentGroups[target].length);
   current = target;
   slides.forEach((slide, index) => {
     slide.classList.toggle("present", index === current);
@@ -27,6 +51,22 @@ function show(next) {
   });
   shell.dataset.slide = String(current);
   history.replaceState(null, "", `#/${current + 1}`);
+}
+
+function advance() {
+  if (current >= 0 && revealed[current] < fragmentGroups[current].length) {
+    setRevealed(current, revealed[current] + 1);
+    return;
+  }
+  show(current + 1);
+}
+
+function retreat() {
+  if (current >= 0 && revealed[current] > 0) {
+    setRevealed(current, revealed[current] - 1);
+    return;
+  }
+  show(current - 1);
 }
 
 // Never steal keys from marimo controls or other interactive elements. The
@@ -55,13 +95,13 @@ document.addEventListener("keydown", (event) => {
     case "PageDown":
     case " ":
       event.preventDefault();
-      show(current + 1);
+      advance();
       break;
     case "ArrowLeft":
     case "ArrowUp":
     case "PageUp":
       event.preventDefault();
-      show(current - 1);
+      retreat();
       break;
     case "Home":
       event.preventDefault();
@@ -87,7 +127,11 @@ document.addEventListener("touchend", (event) => {
   const delta = event.changedTouches[0].clientX - touchStartX;
   touchStartX = null;
   if (Math.abs(delta) < 40) return;
-  show(delta < 0 ? current + 1 : current - 1);
+  if (delta < 0) {
+    advance();
+  } else {
+    retreat();
+  }
 });
 
 window.addEventListener("hashchange", () => show(indexFromHash()));
