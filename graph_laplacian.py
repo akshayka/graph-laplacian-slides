@@ -11,6 +11,7 @@
 #
 # [tool.marimo-studio]
 # default = "slides"
+# runtimes = ["server", "wasm"]
 # ///
 
 import marimo
