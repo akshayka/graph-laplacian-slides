@@ -11,7 +11,7 @@ changes, every cell that depends on it re-runs.
 [marimo studio](https://pypi.org/project/marimo-studio/) lets one notebook
 back one or more authored web pages. A page is ordinary HTML, CSS, and
 JavaScript, and it pulls in live notebook results with tags like
-`<marimo-cell name="fiedler_plot">`. This split matters because the notebook
+`<marimo-cell name="fiedler_plot">` or `<marimo-output name="n_neighbors>`. This split matters because the notebook
 stays the single source of the analysis while the page owns the presentation.
 You write the analysis once and present it as a real web page instead of
 freezing it into screenshots. In this deck, the dataset dropdown and the
