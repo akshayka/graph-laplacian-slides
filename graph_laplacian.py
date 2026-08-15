@@ -20,12 +20,22 @@ __generated_with = "0.21.1"
 app = marimo.App()
 
 with app.setup(hide_code=True):
+    import warnings
+
     import marimo as mo
     import numpy as np
     import matplotlib.pyplot as plt
     from numpy.linalg import eigh
     import sklearn
     from sklearn.neighbors import NearestNeighbors
+
+    # Under Pyodide, threadpoolctl (used by scikit-learn's KMeans) emits a
+    # JsProxy deprecation RuntimeWarning that would render on the slides.
+    warnings.filterwarnings(
+        "ignore",
+        message=r"JsProxy\.as_object_map\(\) is deprecated",
+        category=RuntimeWarning,
+    )
 
 
 @app.cell(hide_code=True)

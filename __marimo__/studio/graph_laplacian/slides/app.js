@@ -134,5 +134,20 @@ document.addEventListener("touchend", (event) => {
   }
 });
 
+// The boot note covers initial startup only. The runtime hooks
+// history.replaceState, so every slide change briefly flips the page state
+// off "ready" — hiding by state would flash the note on each pagination.
+// Remove the note for good the first time the runtime settles instead.
+const bootNote = document.querySelector(".boot-note");
+if (bootNote) {
+  if (document.documentElement.dataset.marimoStudioState === "ready") {
+    bootNote.remove();
+  } else {
+    document.addEventListener("marimo-studio:idle", () => bootNote.remove(), {
+      once: true,
+    });
+  }
+}
+
 window.addEventListener("hashchange", () => show(indexFromHash()));
 show(indexFromHash());

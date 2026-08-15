@@ -315,6 +315,44 @@ h2 {
   display: block;
 }
 
+/* While the notebook boots, the runtime draws a skeleton ::before on empty
+   marimo elements. Size it to match each control so the shrink-to-fit hud
+   and control cards don't collapse, and shape it like a control instead of
+   the default text shimmer. It disappears once real output arrives. */
+.hud marimo-output {
+  min-width: 15rem;
+  --marimo-cell-skeleton-height: 2rem;
+}
+
+.control marimo-output {
+  min-width: 16rem;
+  --marimo-cell-skeleton-height: 2.2rem;
+}
+
+.hud marimo-output:empty::before,
+.control marimo-output:empty::before {
+  background: var(--hairline);
+  border-radius: 6px;
+}
+
+/* The stat values are 2–4 characters, not the default 8ch pill. */
+.chip b[mo-value] {
+  --marimo-value-skeleton-width: 3ch;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hud marimo-output:empty::before,
+  .control marimo-output:empty::before {
+    animation: placeholder-pulse 1.2s ease-in-out infinite;
+  }
+}
+
+@keyframes placeholder-pulse {
+  50% {
+    opacity: 0.45;
+  }
+}
+
 .chips {
   display: flex;
   flex-wrap: wrap;
@@ -438,6 +476,32 @@ h2 {
   visibility: visible;
   opacity: 1;
   pointer-events: auto;
+}
+
+/* ------------------------------------------------------------- boot note */
+
+/* The runtime stamps page state on <html>; this hides the note when the
+   page first becomes ready. app.js then removes the element entirely, so
+   later state flips (each slide change touches history) can't re-show it. */
+.boot-note {
+  position: fixed;
+  bottom: clamp(0.9rem, 3vh, 1.8rem);
+  right: 1.5rem;
+  z-index: 10;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .boot-note {
+    animation: placeholder-pulse 1.2s ease-in-out infinite;
+  }
+}
+
+html[data-marimo-studio-state="ready"] .boot-note {
+  display: none;
 }
 
 /* ----------------------------------------------- signature: spectrum rail */
